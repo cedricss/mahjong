@@ -69,24 +69,32 @@ function game_view(game_id,need_bot){
 	}}
 }
 
-function start(url){ 
-	match(url) {
-		case {path:[] ... }             	: Login.login_view()
-        case {path:["login"] ... }      	: Login.login_view()
-        case {path:["game",id|_] ...}    	: game_view(id,{false});
-		case {path:["gamex",id|_] ...}    	: game_view(id,{true}); 
-        case {path:["how_to_play.html"] ...}: @static_resource("resources/how_to_play.html");
-	    case {path:["hall"] ...}        	: login_required(function(){Page.game_list_view()})
-		case {path:["tutor"] ...}			: Tutor.page_view();
-        case {path: _ ...}                	: Main.fourOffour()
+static_resources =  @static_include_directory("resources")
+
+function permanent_resource(file){
+	Option.switch(
+		Resource.cache_control(_, {permanent}),
+		Resource.raw_status({wrong_address}),
+		StringMap.get(file,static_resources)
+	)
 	}
-	
+
+start = parser {
+    case "/permanent/" file=(.*): permanent_resource(Text.to_string(file))
+    case "/"                    : Login.login_view()
+    case "/login"               : Login.login_view()
+    case "/game/" id=((!"/".)*) : game_view(Text.to_string(id),{false});
+    case "/gamex/" id=((!"/".)*): game_view(Text.to_string(id),{true});
+    case "/how_to_play.html"    : @static_resource("resources/how_to_play.html");
+    case "/hall"                : login_required(function(){Page.game_list_view()})
+    case "/tutor"               : Tutor.page_view();
+    default                     : Main.fourOffour()
 }
 
 Server.start(Server.http,
 	[{register: { doctype : { html5 }}},
-	 {resources: @static_include_directory("resources")},
-	 {dispatch: start}
+	 {resources: static_resources},
+	 {custom: start}
 	]
 );
 

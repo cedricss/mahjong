@@ -54,6 +54,7 @@ set_game = %%engine2d.set_game%%;
 get_game = %%engine2d.get_game%%;
 
 PREFIX = "/resources/"
+AUDIO_PREFIX = "/permanent{PREFIX}"
 
 client function get_ctx(id){
 	canvas = Canvas.get(id);
@@ -71,13 +72,13 @@ client function preload(imgs,auds,f){
 		PREFIX ^ img
 	},imgs);
 	auds = List.map(function(aud){
-		PREFIX ^ aud
+		AUDIO_PREFIX ^ aud
 	},auds);
 	%%engine2d.preload%%(imgs,auds,f);
 }
 
 client function play_sound(key){
-	%%engine2d.play_sound%%(PREFIX ^ key);
+	%%engine2d.play_sound%%(AUDIO_PREFIX ^ key);
 }
 
 /**
