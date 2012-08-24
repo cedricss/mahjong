@@ -9,7 +9,7 @@ PLUGINS=-I {plugins} engine2d.opp
 SRC_DIR=src
 SRC_FILES=$(wildcard $(SRC_DIR)/*.opa)
 
-BIN_DIR=bin
+BIN_DIR=.
 EXEC_NAME=./mahjong.exe
 RUN_OPTS= 
 DEBUG_NAME=./mahjong.exe --verbose 8
